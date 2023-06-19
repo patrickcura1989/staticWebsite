@@ -112,11 +112,6 @@
     //Retrieve all the visitors from the database
     function getNames() {
         // alert("getNames");
-        $.ajaxSetup({
-            headers: {
-                'Access-Control-Allow-Origin' : '*'
-            }
-        });
         $.get("https://sampleapi-hv8z.onrender.com/retrieve")
             .done(function (dataResponse) {
                 // alert(data);
