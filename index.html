@@ -121,10 +121,17 @@
                 //     });
                 //     $('#databaseNames').html($.i18n('database_contents') + JSON.stringify(data));
                 // }
+                // FUND NAMES
+                var specific = 'nikko'
+                // var specific = 'amp'
+                // var specific = 'asb'
+                // var specific = 'anz'
                 var data = JSON.parse(dataResponse);
                 var text = "";
+                var specificText = "";
                 var dates = [];
                 var amounts = [];
+                var specificAmounts = [];
                 if (data.length > 0) {
                     data.forEach(function (element, index) {
                         // alert(element.funds);
@@ -133,6 +140,9 @@
                             var total = 0;
                             element.funds.forEach(function (fund, index) {
                                 total += fund.price * fund.percent
+                                if(fund.fund === specific) {
+                                    specificAmounts.push(fund.price);
+                                }
                             });
                             amounts.push(total);
                         }
@@ -144,11 +154,17 @@
                     return result;
                 }, {})
 
+                var specificResult = specificAmounts.reduce(function (result, field, index) {
+                    result[dates[index]] = field;
+                    return result;
+                }, {})
+
                 //console.log(result);
                 dates = [];
                 amounts = [];
 
                 keys = Object.keys(result).sort() // here is the magic
+                specificKeys = Object.keys(specificResult).sort() // here is the magic
 
                 for (var i = 0; i < keys.length; i++) {
                     var key = keys[i] // totally unnecessary readability enhancement
@@ -156,12 +172,18 @@
                     dates.push(key);
                     amounts.push(result[key]);
                 }
+                for (var i = 0; i < specificKeys.length; i++) {
+                    var key = specificKeys[i] // totally unnecessary readability enhancement
+                    specificText += '<tr> <td style="padding:10px">' + key + '</td> <td style="padding:10px">' + specificResult[key] + '</td> </tr>';
+                }
                 console.log(dates);
                 console.log(amounts);
 
                 document.getElementById("demo").innerHTML
-                    = '<table  border="solid 2px;" style="color:black;font-size:15px;margin-left: auto;margin-right: auto;">'
-                    + text + '</table>';
+                    = '<h2> Combined </h2> <table  border="solid 2px;" style="color:black;font-size:15px;margin-left: auto;margin-right: auto;">'
+                    + text + '</table>' +
+                    '<h2>' + specific + '</h2> <table  border="solid 2px;" style="color:black;font-size:15px;margin-left: auto;margin-right: auto;">'
+                    + specificText + '</table>';
                 //alert(dates);
                 //alert(amounts);
                 var ctx = document.getElementById("examChart").getContext("2d");
